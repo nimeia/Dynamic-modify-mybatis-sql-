@@ -1,0 +1,10 @@
+spring:
+  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 52alwWQIst!sas
+    url: jdbc:log4jdbc:mysql://192.168.123.67:3306/mybatis-test
+    driver-class-name: net.sf.log4jdbc.DriverSpy
+mybatis:
+  mapper-locations: /mapper/*.xml
+
