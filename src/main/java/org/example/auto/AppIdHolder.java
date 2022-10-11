@@ -34,7 +34,7 @@ public class AppIdHolder {
                 while (table_column.next()) {
                     String column_name = table_column.getString("COLUMN_NAME");
                     if (column_name.toLowerCase().equals(APP_ID_COLUMN_NAME)) {
-                        tableSet.add(table_name);
+                        tableSet.add(table_name.toLowerCase());
                     }
                 }
             }

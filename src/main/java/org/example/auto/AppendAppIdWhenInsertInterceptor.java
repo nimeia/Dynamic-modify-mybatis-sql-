@@ -36,8 +36,6 @@ import java.util.regex.Pattern;
  */
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class AppendAppIdWhenInsertInterceptor implements Interceptor {
-    private Properties properties = new Properties();
-
     private String APP_ID_COLUMN_NAME = AppIdHolder.APP_ID_COLUMN_NAME;
 
     //反射时使用变量
@@ -81,15 +79,14 @@ public class AppendAppIdWhenInsertInterceptor implements Interceptor {
         ProviderSqlSource backUpOriginalProviderSqlSource = null;
         MappedStatement mappedStatementObj = (MappedStatement) invocation.getArgs()[0];
         try {
+            //获取前端传递的appid
+            String appid = AppIdHolder.appId.get();
             //非插入不处理
-            if (!mappedStatementObj.getSqlCommandType().equals(SqlCommandType.INSERT)) {
+            if (!mappedStatementObj.getSqlCommandType().equals(SqlCommandType.INSERT) || appid==null || "".equals(appid.trim())) {
                 return invocation.proceed();
             }
 
             Object parameterObj = invocation.getArgs()[1];
-
-            //获取前端传递的appid
-            String appid = AppIdHolder.appId.get();
 
             // 增加入参
             if (parameterObj instanceof MapperMethod.ParamMap) {
@@ -143,7 +140,7 @@ public class AppendAppIdWhenInsertInterceptor implements Interceptor {
             Insert insert = (Insert) CCJSqlParserUtil.parse(mybatisSqlStr);
             boolean flag = false;
             //表内没有appid 字段不处理
-            if(! AppIdHolder.tableSet.contains(insert.getTable().getName())){
+            if(! AppIdHolder.tableSet.contains(insert.getTable().getName().toLowerCase())){
                 return invocation.proceed();
             }
 
@@ -185,12 +182,9 @@ public class AppendAppIdWhenInsertInterceptor implements Interceptor {
                 //sql 中增加 插入字段值
                 if (sqlSourceOriginal instanceof RawSqlSource) {
                     SqlSource sqlSourceInRawSqlSource = (SqlSource) sqlSourceFieldInRawSqlSource.get(sqlSourceOriginal);
-
                     replaceSqlInStaticSqlSource(mappedStatementObj, sqlSourceInRawSqlSource, insert);
-
                 } else if (sqlSourceOriginal instanceof StaticSqlSource) {
                     replaceSqlInStaticSqlSource(mappedStatementObj, sqlSourceOriginal, insert);
-
                 } else if (sqlSourceOriginal instanceof ProviderSqlSource) {
                     //处理过程中被替换成其它类型，理论上不会有 ProviderSqlSource
                 } else if (sqlSourceOriginal instanceof DynamicSqlSource) {
@@ -259,10 +253,8 @@ public class AppendAppIdWhenInsertInterceptor implements Interceptor {
      * @return
      * @throws IllegalAccessException
      */
-    private static String getOriginnalSqlFromDynamicSqlSource(SqlSource sqlSourceOriginal, String sqlOriginal, List<String> sqlReplaceStr) throws IllegalAccessException {
-        Field rootSqlNode = ReflectionUtils.findField(DynamicSqlSource.class, "rootSqlNode");
-        rootSqlNode.setAccessible(true);
-        Object sqlNode = rootSqlNode.get(sqlSourceOriginal);
+    private  String getOriginnalSqlFromDynamicSqlSource(SqlSource sqlSourceOriginal, String sqlOriginal, List<String> sqlReplaceStr) throws IllegalAccessException {
+        Object sqlNode = rootSqlNodeFieldInDynamicSqlSource.get(sqlSourceOriginal);
 
         Field text = ReflectionUtils.findField(TextSqlNode.class, "text");
         text.setAccessible(true);
@@ -277,13 +269,4 @@ public class AppendAppIdWhenInsertInterceptor implements Interceptor {
         return matcher.replaceAll("\\?");
     }
 
-    @Override
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public Object plugin(Object target) {
-        return Interceptor.super.plugin(target);
-    }
 }

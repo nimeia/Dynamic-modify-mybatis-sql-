@@ -2,6 +2,9 @@ package org.example;
 
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+import java.util.Map;
+
 @Mapper
 public interface CityMapper {
 
@@ -34,4 +37,26 @@ public interface CityMapper {
     @Insert("insert into city ( state, name) " +
             "values ('1111','222222')")
     void insertOne();
+
+    @Select(" select * " +
+            " from city " +
+            "         left join hospital h on city.name = h.name " +
+            "         left join school s on city.appid = s.appid " +
+            " where city.name = #{name} ;")
+    List<Map> selectCity(@Param("name") String name,@Param("appid") String appid);
+
+    @Select(" select * " +
+            " from city  ,hospital h " +
+            "          left join school s on appid = s.appid " +
+            " where city.name = #{name}  and city.name = h.name ;")
+    List<Map> selectCityTwo(@Param("name") String name,@Param("appid") String appid);
+
+    @Select(" select * from city c,school s where c.name = s.name ")
+    List<Map> selectCityThree(@Param("name") String name,@Param("appid") String appid);
+
+    @Select(" select * from city c,school s where c.name = s.name and c.name = '${city.name}' ")
+    List<Map> selectCityFour(@Param("city") City city, @Param("appid") String ... appid);
+
+    @Select(" select * from city c,school s where c.name = s.name and c.name = #{city.name} ")
+    List<Map> selectCityFive(@Param("city") City city, @Param("appid") String ... appid);
 }
