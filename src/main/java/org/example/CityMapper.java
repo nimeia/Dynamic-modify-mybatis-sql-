@@ -59,4 +59,16 @@ public interface CityMapper {
 
     @Select(" select * from city c,school s where c.name = s.name and c.name = #{city.name} ")
     List<Map> selectCityFive(@Param("city") City city, @Param("appid") String ... appid);
+
+    @Select(" select * from city c,school s where c.name = s.name and c.name = '${city.name}' ")
+    List<Map> selectCitySix(City city, @Param("appid") String ... appid);
+
+    @Select(" select * from city c,school s where c.name = s.name and c.name = '${name}' ")
+    List<Map> selectCity7(City city, @Param("appid") String ... appid);
+
+    @Select(" select * from city c,school s where c.name = s.name and c.name = '${name}' ")
+    List<Map> selectCity8(@Param("name") String name,City city, @Param("appid") String ... appid);
+
+    @Select(" select * from city c,school s where c.name = s.name and c.name = '${name}' ")
+    List<Map> selectCity9( String name,City city, @Param("appid") String ... appid);
 }

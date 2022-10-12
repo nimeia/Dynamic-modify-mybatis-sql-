@@ -43,7 +43,7 @@ public class IndexController {
 
     }
 
-    private Boolean modifySelect(PlainSelect selectBody){
+    private Boolean modifySelect(PlainSelect selectBody) {
         FromItem fromItem = selectBody.getFromItem();
 
         List<Join> joins = selectBody.getJoins();
@@ -60,7 +60,7 @@ public class IndexController {
             Pivot pivot = fromItem.getPivot();
             tables.put(alias != null ? alias.getName() : (schemaName == null ? name : schemaName + "." + name), name);
         } else if (fromItem instanceof SubSelect) {
-            PlainSelect selectBody1 = (PlainSelect)((SubSelect) fromItem).getSelectBody();
+            PlainSelect selectBody1 = (PlainSelect) ((SubSelect) fromItem).getSelectBody();
             return modifySelect(selectBody1);
         }
         for (Join join : joins) {
@@ -82,7 +82,7 @@ public class IndexController {
                 for (Map.Entry<String, String> entry : tables.entrySet()) {
                     if (entry.getValue().equals(tableName)) {
                         EqualsTo equalsTo = new EqualsTo();
-                        equalsTo.withLeftExpression(new Column(entry.getKey()+"."+AppIdHolder.APP_ID_COLUMN_NAME));
+                        equalsTo.withLeftExpression(new Column(entry.getKey() + "." + AppIdHolder.APP_ID_COLUMN_NAME));
                         equalsTo.withRightExpression(new JdbcParameter());
                         equalsTos.add(equalsTo);
                     }
@@ -90,8 +90,8 @@ public class IndexController {
             }
             if (equalsTos.size() > 0) {
                 Iterator<EqualsTo> iterator = equalsTos.iterator();
-                Expression  expression = where;
-                while(iterator.hasNext()){
+                Expression expression = where;
+                while (iterator.hasNext()) {
                     AndExpression andExpression = new AndExpression();
                     andExpression.withLeftExpression(expression).withRightExpression(iterator.next());
                     expression = andExpression;
@@ -120,23 +120,35 @@ public class IndexController {
 
 //        List<Map> iidd = cityMapper.selectCityTwo("xxxx", "iidd");
 //        List<Map> iidd = cityMapper.selectCityThree("xxxx", "iidd");
-        City city = new City("sss","55555");
+        City city = new City("sss", "55555");
 
-        cityMapper.selectCityFive(city);
-        cityMapper.selectCityFive(city, "appid");
 
+//        cityMapper.selectCitySix(city);//会报错
+//        cityMapper.selectCity7(city);
+//        cityMapper.selectCity7(city,"appid");
+
+//        cityMapper.selectCity8("xx",city);
+//        cityMapper.selectCity8("xx",city,"appid");
+
+        cityMapper.selectCity9("xx", city);
+        cityMapper.selectCity9("xx", city, "appid");
+
+
+//        cityMapper.selectCityFive(city);
+//        cityMapper.selectCityFive(city, "appid");
 //
-        cityMapper.selectCityThree("xxxx","appid");
-
-        cityMapper.selectCityFour(city);
-        cityMapper.selectCityFour(city,"appid");
+////
+//        cityMapper.selectCityThree("xxxx","appid");
 //
-        SchoolExample schoolExample = new SchoolExample();
-        schoolExample.createCriteria().andNameEqualTo("1111").andAppidEqualTo("====");
-        schoolDAO.countByExample(schoolExample);
-        schoolDAO.countByExample(schoolExample,"appid");
-        schoolDAO.selectByExample(schoolExample);
-        schoolDAO.selectByExample(schoolExample,"appid");
+//        cityMapper.selectCityFour(city);
+//        cityMapper.selectCityFour(city,"appid");
+////
+//        SchoolExample schoolExample = new SchoolExample();
+//        schoolExample.createCriteria().andNameEqualTo("1111").andAppidEqualTo("====");
+//        schoolDAO.countByExample(schoolExample);
+//        schoolDAO.countByExample(schoolExample,"appid");
+//        schoolDAO.selectByExample(schoolExample);
+//        schoolDAO.selectByExample(schoolExample,"appid");
 
         /*if (true) return;
         OtherCity otherCity = new OtherCity("11", "222");
@@ -160,7 +172,8 @@ public class IndexController {
 
         cityMapper.insertThree(city);
         cityMapper.insertFour(city);
-        cityMapper.insertFive(city)*/;
+        cityMapper.insertFive(city)*/
+        ;
 
 
 //        cityMapper.insertThree(city);
