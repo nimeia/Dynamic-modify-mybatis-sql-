@@ -36,6 +36,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 动态增加查询条件插件
+ */
 @Intercepts({
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
@@ -85,7 +88,7 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
         //当sqlSource 为 ProviderSqlSource 时，修改sql要替换 MappedStatement 中的sqlSource ,处理完后，需要替换回旧的
         SqlSource backUpOriginalProviderSqlSource = null;
         MappedStatement mappedStatementObj = (MappedStatement) invocation.getArgs()[0];
-        System.out.println(mappedStatementObj);
+//        System.out.println(mappedStatementObj);
         try {
             //非插入不处理
             if (!mappedStatementObj.getSqlCommandType().equals(SqlCommandType.SELECT) /*|| appid == null || "".equals(appid.trim())*/) {

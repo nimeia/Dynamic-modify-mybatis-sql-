@@ -78,4 +78,10 @@ public interface CityMapper {
 
     @Select("select * from (select * from city where name=#{city.name}) a ,school s where a.state='${city.state}' and a.name=s.name;")
     List<Map> subSelectTest(@Param("city") City city,@Param("appid") String ... appid);
+
+    @Select("select * from city where name = ? and state = ?")
+    List selectTest(String name, String state);
+
+    @Select("select * from city where name = ? and state = ?")
+    List selectTest1(String name, String state,@Param("appid") String ... appid);
 }

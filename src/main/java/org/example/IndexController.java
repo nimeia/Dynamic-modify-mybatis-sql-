@@ -110,6 +110,8 @@ public class IndexController {
     @RequestMapping({"", "/"})
     public void index() throws Exception {
 
+//        List list = cityMapper.selectTest("55555", "55555"); //报错
+//        List appid = cityMapper.selectTest1("55555", "55555", "appid"); //报错
 
 //        City city = new City();
 //        city.setName("xx");
@@ -121,6 +123,8 @@ public class IndexController {
         cityMapper.selectCityTwo("xxxx", "appid");
         cityMapper.selectCityThree("xxxx", "appid");
         City city = new City("sss", "55555");
+
+
 
 
 //        cityMapper.selectCitySix(city);//会报错
@@ -172,7 +176,7 @@ public class IndexController {
             city.setTopId(11111);
             cityMapper.insertSix(city);
         }
-//        city.setAppid("-----");
+//      city.setAppid("-----");
 
         cityMapper.insert(city);
         cityMapper.insertOne();
