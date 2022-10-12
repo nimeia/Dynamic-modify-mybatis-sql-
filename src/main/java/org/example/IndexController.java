@@ -121,17 +121,22 @@ public class IndexController {
 //        List<Map> iidd = cityMapper.selectCityTwo("xxxx", "iidd");
 //        List<Map> iidd = cityMapper.selectCityThree("xxxx", "iidd");
         City city = new City("sss","55555");
-//        cityMapper.selectCityFive(city, "iidd");
-//        cityMapper.selectCityFive(city);
 
-//        cityMapper.selectCityThree("xxxx","ss");
-//        cityMapper.selectCityFour(city,"55555");
-//        cityMapper.selectCityFour(city);
+        cityMapper.selectCityFive(city);
+        cityMapper.selectCityFive(city, "appid");
 
+//
+        cityMapper.selectCityThree("xxxx","appid");
+
+        cityMapper.selectCityFour(city);
+        cityMapper.selectCityFour(city,"appid");
+//
         SchoolExample schoolExample = new SchoolExample();
         schoolExample.createCriteria().andNameEqualTo("1111").andAppidEqualTo("====");
-//        schoolDAO.countByExample(schoolExample);
-        schoolDAO.countByExample(schoolExample,"55555")
+        schoolDAO.countByExample(schoolExample);
+        schoolDAO.countByExample(schoolExample,"appid");
+        schoolDAO.selectByExample(schoolExample);
+        schoolDAO.selectByExample(schoolExample,"appid");
 
         /*if (true) return;
         OtherCity otherCity = new OtherCity("11", "222");

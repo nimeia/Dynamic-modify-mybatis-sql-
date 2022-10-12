@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SchoolDAO {
-    long countByExample(@Param("example") SchoolExample example,@Param("appid") String ...appid);
+    long countByExample(SchoolExample example,@Param("appid") String ...appid);
 
     int deleteByExample(SchoolExample example);
 
@@ -18,7 +18,7 @@ public interface SchoolDAO {
 
     int insertSelective(School record);
 
-    List<School> selectByExample(SchoolExample example);
+    List<School> selectByExample(SchoolExample example, @Param("appid") String ...appid);
 
     School selectByPrimaryKey(Integer id);
 

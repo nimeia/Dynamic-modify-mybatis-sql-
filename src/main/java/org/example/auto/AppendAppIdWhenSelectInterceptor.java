@@ -51,10 +51,12 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
     Field sqlFieldInStaticSqlSource = ReflectionUtils.findField(StaticSqlSource.class, "sql");
     Field sqlSourceFieldInRawSqlSource = ReflectionUtils.findField(RawSqlSource.class, "sqlSource");
 
+    Field parameterMappingsFieldInStaticSqlSource = ReflectionUtils.findField(StaticSqlSource.class,"parameterMappings");
     Field additionalParametersFieldInBoundSql =ReflectionUtils.findField(BoundSql.class, "additionalParameters");
 
     Field textFieldInTextSqlNode = ReflectionUtils.findField(TextSqlNode.class, "text");
     public AppendAppIdWhenSelectInterceptor() {
+        parameterMappingsFieldInStaticSqlSource.setAccessible(true);
         additionalParametersFieldInBoundSql.setAccessible(true);
         textFieldInTextSqlNode.setAccessible(true);
         rootSqlNodeFieldInDynamicSqlSource.setAccessible(true);
@@ -77,6 +79,7 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
     }
 
     Map<SqlSource,SqlSource> newSqlSourceCache = new HashMap<>();
+    Map<SqlSource,Integer> newSqlSourceCacheAddParamsCount = new HashMap<>();
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         //当sqlSource 为 ProviderSqlSource 时，修改sql要替换 MappedStatement 中的sqlSource ,处理完后，需要替换回旧的
@@ -104,12 +107,14 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
                             Object arg01 = paramMap.get("arg0");
                             invocation.getArgs()[1]= arg01;
                             parameterObj = arg01;
-                        }else if(paramMap.containsKey("param1")){
+                        }
+                        //命名参数 不用处理
+                        /*else if(paramMap.containsKey("param1")){
                             //命名参数
                             Object arg01 = paramMap.get("param1");
                             invocation.getArgs()[1]= arg01;
                             parameterObj = arg01;
-                        }
+                        }*/
 
                     }
                     return invocation.proceed();
@@ -125,7 +130,9 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
                     Map argsMap = new HashMap();
                     for (Field declaredField : declaredFields) {
                         declaredField.setAccessible(true);
-                        argsMap.put(declaredField.getName(),declaredField.get(arg0));
+                        if(!declaredField.getName().equals(AppIdHolder.APP_ID_COLUMN_NAME)){
+                            argsMap.put(declaredField.getName(),declaredField.get(arg0));
+                        }
                     }
                     paramMap.putAll(argsMap);
 
@@ -156,6 +163,20 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
                 SqlSource newSqlSource = newSqlSourceCache.get(sqlSourceOriginal);
                 if (newSqlSource != null && newSqlSourceCanCacheFlag) {
                     sqlSourceFiledInMappedStatement.set(mappedStatementObj,newSqlSource);
+                    int addConditionCount = newSqlSourceCacheAddParamsCount.get(sqlSourceOriginal);
+                    if(sqlSourceOriginal instanceof  RawSqlSource || sqlSourceOriginal instanceof StaticSqlSource){
+                        SqlSource tempSqlSource = sqlSourceOriginal;
+                        if(sqlSourceOriginal instanceof  RawSqlSource){
+                            tempSqlSource = (SqlSource) sqlSourceFieldInRawSqlSource.get(sqlSourceOriginal);
+                        }
+
+                        /*List<ParameterMapping> parameterMappingList = (List<ParameterMapping>) parameterMappingFieldInStaticSqlSource.get(tempSqlSource);
+                        ParameterMapping parameterMapping = new ParameterMapping.Builder(mappedStatementObj.getConfiguration(), AppIdHolder.APP_ID_COLUMN_NAME,
+                                String.class.getClass()).typeHandler(new StringTypeHandler()).build();
+                        for (int i = 0; i < addConditionCount; i++) {
+                            parameterMappingList.add(parameterMapping);
+                        }*/
+                    }
                     return invocation.proceed();
                 }
             }
@@ -192,19 +213,36 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
                 //替换 SQL
                 if (sqlSourceOriginal instanceof RawSqlSource) {
                     SqlSource sqlSourceInRawSqlSource = (SqlSource) sqlSourceFieldInRawSqlSource.get(sqlSourceOriginal);
-                    RawSqlSource newSqlSource = new RawSqlSource(mappedStatementObj.getConfiguration(),sqlFieldInStaticSqlSource.get(sqlSourceInRawSqlSource).toString() ,parameterObj.getClass());
-                    replaceSqlInStaticSqlSource(mappedStatementObj, newSqlSource, select, addConditionCount);
+                    RawSqlSource newSqlSource = new RawSqlSource(mappedStatementObj.getConfiguration()
+                            ,sqlFieldInStaticSqlSource.get(sqlSourceInRawSqlSource).toString()
+                            ,parameterObj.getClass());
+                    SqlSource tempSqlSourceInRawSqlSource = (SqlSource) sqlSourceFieldInRawSqlSource.get(newSqlSource);
+
+                    List<ParameterMapping> tempParameterMappingList =  (List<ParameterMapping>) parameterMappingsFieldInStaticSqlSource.get(sqlSourceInRawSqlSource);
+                    List<ParameterMapping> tempParameterMappingListNew = new ArrayList<>();
+                    tempParameterMappingListNew.addAll(tempParameterMappingList);
+                    parameterMappingsFieldInStaticSqlSource.set(tempSqlSourceInRawSqlSource,tempParameterMappingListNew );
+
+                    replaceSqlInStaticSqlSource(mappedStatementObj, tempSqlSourceInRawSqlSource, select, addConditionCount);
 
                     if(newSqlSourceCanCacheFlag){
                         newSqlSourceCache.put(sqlSourceOriginal,newSqlSource);
+                        newSqlSourceCacheAddParamsCount.put(sqlSourceOriginal,addConditionCount);
                     }
                     sqlSourceFiledInMappedStatement.set(mappedStatementObj,newSqlSource);
 
                 } else if (sqlSourceOriginal instanceof StaticSqlSource) {
-                    StaticSqlSource newSqlSource = new StaticSqlSource(mappedStatementObj.getConfiguration(),sqlFieldInStaticSqlSource.get(sqlSourceOriginal).toString() );
+                    List<ParameterMapping> tempParameterMappingList =  (List<ParameterMapping>) parameterMappingsFieldInStaticSqlSource.get(sqlSourceOriginal);
+                    List<ParameterMapping> tempParameterMappingListNew = new ArrayList<>();
+                    tempParameterMappingListNew.addAll(tempParameterMappingList);
+
+                    StaticSqlSource newSqlSource = new StaticSqlSource(mappedStatementObj.getConfiguration()
+                            , sqlFieldInStaticSqlSource.get(sqlSourceOriginal).toString()
+                            , tempParameterMappingListNew );
                     replaceSqlInStaticSqlSource(mappedStatementObj, sqlSourceOriginal, select, addConditionCount);
                     if(newSqlSourceCanCacheFlag){
                         newSqlSourceCache.put(sqlSourceOriginal,newSqlSource);
+                        newSqlSourceCacheAddParamsCount.put(sqlSourceOriginal,addConditionCount);
                     }
                     sqlSourceFiledInMappedStatement.set(mappedStatementObj,newSqlSource);
 
@@ -217,6 +255,7 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
                     replaceSqlInDynamicSqlSource(newSqlSource, sqlReplaceStr, select);
                     if(!providreSqlSourceFlag && newSqlSourceCanCacheFlag){
                         newSqlSourceCache.put(sqlSourceOriginal,newSqlSource);
+                        newSqlSourceCacheAddParamsCount.put(sqlSourceOriginal,addConditionCount);
                     }
                     sqlSourceFiledInMappedStatement.set(mappedStatementObj,newSqlSource);
                 }
