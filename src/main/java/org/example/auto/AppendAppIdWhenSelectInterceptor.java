@@ -163,20 +163,20 @@ public class AppendAppIdWhenSelectInterceptor implements Interceptor {
                 SqlSource newSqlSource = newSqlSourceCache.get(sqlSourceOriginal);
                 if (newSqlSource != null && newSqlSourceCanCacheFlag) {
                     sqlSourceFiledInMappedStatement.set(mappedStatementObj,newSqlSource);
-                    int addConditionCount = newSqlSourceCacheAddParamsCount.get(sqlSourceOriginal);
+                    /*int addConditionCount = newSqlSourceCacheAddParamsCount.get(sqlSourceOriginal);
                     if(sqlSourceOriginal instanceof  RawSqlSource || sqlSourceOriginal instanceof StaticSqlSource){
                         SqlSource tempSqlSource = sqlSourceOriginal;
                         if(sqlSourceOriginal instanceof  RawSqlSource){
                             tempSqlSource = (SqlSource) sqlSourceFieldInRawSqlSource.get(sqlSourceOriginal);
                         }
 
-                        /*List<ParameterMapping> parameterMappingList = (List<ParameterMapping>) parameterMappingFieldInStaticSqlSource.get(tempSqlSource);
+                        List<ParameterMapping> parameterMappingList = (List<ParameterMapping>) parameterMappingFieldInStaticSqlSource.get(tempSqlSource);
                         ParameterMapping parameterMapping = new ParameterMapping.Builder(mappedStatementObj.getConfiguration(), AppIdHolder.APP_ID_COLUMN_NAME,
                                 String.class.getClass()).typeHandler(new StringTypeHandler()).build();
                         for (int i = 0; i < addConditionCount; i++) {
                             parameterMappingList.add(parameterMapping);
-                        }*/
-                    }
+                        }
+                    }*/
                     return invocation.proceed();
                 }
             }
