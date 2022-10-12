@@ -162,21 +162,21 @@ public class IndexController {
         schoolDAO.selectByExample(schoolExample,"appid");*/
 
 
-
-        /*if (true) return;
+//        if (true) return;
         OtherCity otherCity = new OtherCity("11", "222");
         otherCityDAO.insert(otherCity);
 
 
-//        cityMapper.insertOne();
+        City city = new City();
+
+        cityMapper.insertOne();
         for (int i = 0; i < 10; i++) {
-            city = new City();
             city.setName("55555");
             city.setState("444444");
             city.setTopId(11111);
             cityMapper.insertSix(city);
         }
-//      city.setAppid("-----");
+        city.setAppid("-----");
 
         cityMapper.insert(city);
         cityMapper.insertOne();
@@ -185,8 +185,7 @@ public class IndexController {
 
         cityMapper.insertThree(city);
         cityMapper.insertFour(city);
-        cityMapper.insertFive(city)*/
-        ;
+        cityMapper.insertFive(city);
 
 
 //        cityMapper.insertThree(city);
