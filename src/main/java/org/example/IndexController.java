@@ -115,40 +115,49 @@ public class IndexController {
 //        city.setName("xx");
 //        city.setState("xxxx");
 //        cityDAO.insert(city);
+/*
+        List<Map> asdf = cityMapper.selectCity("55555", "appid");
 
-//        List<Map> asdf = cityMapper.selectCity("55555", "asdf");
-
-//        List<Map> iidd = cityMapper.selectCityTwo("xxxx", "iidd");
-//        List<Map> iidd = cityMapper.selectCityThree("xxxx", "iidd");
+        cityMapper.selectCityTwo("xxxx", "appid");
+        cityMapper.selectCityThree("xxxx", "appid");
         City city = new City("sss", "55555");
 
 
 //        cityMapper.selectCitySix(city);//会报错
-//        cityMapper.selectCity7(city);
-//        cityMapper.selectCity7(city,"appid");
+        cityMapper.selectCity7(city);
+        cityMapper.selectCity7(city,"appid");
 
-//        cityMapper.selectCity8("xx",city);
-//        cityMapper.selectCity8("xx",city,"appid");
+        cityMapper.selectCity8("xx",city);
+        cityMapper.selectCity8("xx",city,"appid");
 
-        cityMapper.selectCity9("xx", city);
-        cityMapper.selectCity9("xx", city, "appid");
+//        cityMapper.selectCity9("xx", city);//会报错
+//        cityMapper.selectCity9("xx", city, "appid");//会报错
 
+        cityMapper.selectPage(city, 10, 10, "appid");
 
-//        cityMapper.selectCityFive(city);
-//        cityMapper.selectCityFive(city, "appid");
+        cityMapper.selectCityFive(city);
+        cityMapper.selectCityFive(city, "appid");
+
 //
+        cityMapper.selectCityThree("xxxx","appid");
+
+        cityMapper.selectCityFour(city);
+        cityMapper.selectCityFour(city,"appid");
 ////
-//        cityMapper.selectCityThree("xxxx","appid");
-//
-//        cityMapper.selectCityFour(city);
-//        cityMapper.selectCityFour(city,"appid");
-////
-//        SchoolExample schoolExample = new SchoolExample();
-//        schoolExample.createCriteria().andNameEqualTo("1111").andAppidEqualTo("====");
-//        schoolDAO.countByExample(schoolExample);
-//        schoolDAO.countByExample(schoolExample,"appid");
-//        schoolDAO.selectByExample(schoolExample);
-//        schoolDAO.selectByExample(schoolExample,"appid");
+
+        cityMapper.subSelectTest(city);
+        cityMapper.subSelectTest(city,"appid");
+        SchoolExample schoolExample = new SchoolExample();
+        schoolExample.setOrderByClause(" id desc");
+        schoolExample.setLimit(10);
+        schoolExample.setOffset(10L);
+        schoolExample.createCriteria().andNameEqualTo("1111").andAppidEqualTo("====");
+        schoolDAO.countByExample(schoolExample);
+        schoolDAO.countByExample(schoolExample,"appid");
+        schoolDAO.selectByExample(schoolExample);
+        schoolDAO.selectByExample(schoolExample,"appid");*/
+
+
 
         /*if (true) return;
         OtherCity otherCity = new OtherCity("11", "222");

@@ -71,4 +71,11 @@ public interface CityMapper {
 
     @Select(" select * from city c,school s where c.name = s.name and c.name = '${name}' ")
     List<Map> selectCity9( String name,City city, @Param("appid") String ... appid);
+
+
+    @Select(" select * from city c,school s where c.name = s.name and c.name = '${city.name}'  limit ${pageSize} offset #{currentPage}")
+    List<Map> selectPage(@Param("city") City city, @Param("currentPage") Integer currentPage, @Param("pageSize") Integer pageSize, @Param("appid") String ... appid);
+
+    @Select("select * from (select * from city where name=#{city.name}) a ,school s where a.state='${city.state}' and a.name=s.name;")
+    List<Map> subSelectTest(@Param("city") City city,@Param("appid") String ... appid);
 }
