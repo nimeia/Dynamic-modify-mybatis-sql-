@@ -1,0 +1,13 @@
+plugins{
+    id 'groovy-gradle-plugin'
+    id 'java-platform'
+}
+
+dependencies {
+    constraints {
+        api 'com.alibaba:fastjson:1.2.71'
+        api 'org.projectlombok:lombok:1.18.24'
+
+
+    }
+}
