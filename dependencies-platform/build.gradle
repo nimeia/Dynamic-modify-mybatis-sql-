@@ -1,13 +1,25 @@
 plugins{
-    id 'groovy-gradle-plugin'
     id 'java-platform'
+    id 'maven-publish'
 }
 
 dependencies {
+    api platform('org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12')
     constraints {
         api 'com.alibaba:fastjson:1.2.71'
         api 'org.projectlombok:lombok:1.18.24'
+    }
 
+}
 
+javaPlatform {
+    allowDependencies()
+}
+
+publishing {
+    publications {
+        myPlatform(MavenPublication) {
+            from components.javaPlatform
+        }
     }
 }

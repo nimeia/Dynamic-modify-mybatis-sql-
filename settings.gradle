@@ -1,2 +1,37 @@
 rootProject.name = 'gradle-multiproject'
 
+
+include(":dependencies-platform")
+//
+//include 'helloService'
+//include 'helloService:hello-model'
+//findProject(':helloService:hello-model')?.name = 'hello-model'
+
+
+def includeProject(File file, int level, String parentProject) {
+    if (file.isDirectory() && level < 2) {
+        level++;
+        if (file.isDirectory() && file.listFiles()*.name.contains("build.gradle") && !file.name.equals("buildSrc")) {
+            include "${parentProject}:${file.name}"
+            parentProject = "${parentProject}:${file.name}"
+            file.listFiles().each { subit ->
+                includeProject(subit, level, parentProject)
+            }
+        }
+        if (file.listFiles()*.name.contains("build.gradle")) {
+            if (file.name.endsWith("app")) {
+                findProject("$parentProject")?.with {
+                    plugins {
+                        id 'maven-publish'
+                    }
+                }
+            }
+
+        }
+    }
+
+}
+
+rootDir.listFiles().each {
+    includeProject(it, 0, "")
+}

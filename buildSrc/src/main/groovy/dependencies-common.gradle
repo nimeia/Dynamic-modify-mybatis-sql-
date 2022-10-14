@@ -1,0 +1,22 @@
+plugins{
+    id 'java'
+}
+
+dependencies {
+
+    implementation platform(project(':dependencies-platform'))
+
+    implementation 'com.alibaba:fastjson'
+    compileOnly 'org.projectlombok:lombok'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
